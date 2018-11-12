@@ -22,6 +22,7 @@ import java.util.ResourceBundle;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Supplier;
 
 import org.apache.log4j.helpers.NullEnumeration;
 import org.apache.log4j.spi.LoggerFactory;
@@ -218,6 +219,10 @@ public class Category {
         maybeLog(FQCN, org.apache.logging.log4j.Level.DEBUG, message, t);
     }
 
+    public void debug(Supplier<String> messageSuppleir) {
+	logIfEnabled(Level.DEBUG, logger.isDebugEnabled(), messageSuppleir);
+    }
+
     public boolean isDebugEnabled() {
         return logger.isDebugEnabled();
     }
@@ -266,6 +271,10 @@ public class Category {
         maybeLog(FQCN, org.apache.logging.log4j.Level.INFO, message, t);
     }
 
+    public void info(Supplier<String> messageSuppleir) {
+	logIfEnabled(Level.INFO, logger.isInfoEnabled(), messageSuppleir);
+    }
+
     public boolean isInfoEnabled() {
         return logger.isInfoEnabled();
     }
@@ -278,6 +287,10 @@ public class Category {
         maybeLog(FQCN, org.apache.logging.log4j.Level.TRACE, message, t);
     }
 
+    public void trace(Supplier<String> messageSuppleir) {
+	logIfEnabled(Level.TRACE, Logger.isTraceEnabled(), messageSuppleir);
+    }
+	
     public boolean isTraceEnabled() {
         return logger.isTraceEnabled();
     }
@@ -484,5 +497,12 @@ public class Category {
     private boolean isEnabledFor(final org.apache.logging.log4j.Level level) {
         return logger.isEnabled(level, null, null);
     }
+	
+    private void logIfEnabled(Level level, Boolean isEnabled, Supplier<String> messageSuppleir){
+	if (isEnabled){
+		logger.doLog(level, logger.contextMessage(messageSuppleir.get(), false), null);
+	}
+    }
+	
 
 }
